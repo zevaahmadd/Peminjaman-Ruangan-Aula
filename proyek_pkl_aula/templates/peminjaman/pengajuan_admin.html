@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block title %}Pengajuan Peminjaman (Admin){% endblock %}
+
+{% block content %}
+<h3>Daftar Pengajuan Peminjaman</h3>
+
+<form method="get" class="mb-3">
+  <div class="row g-2">
+    <div class="col-auto">
+      <select name="status" class="form-select">
+        <option value="">Semua Status</option>
+        <option value="MENUNGGU">Menunggu</option>
+        <option value="DISETUJUI">Disetujui</option>
+        <option value="DITOLAK">Ditolak</option>
+        <option value="DIBATALKAN">Dibatalkan</option>
+        <option value="SELESAI">Selesai</option>
+      </select>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-action">Filter</button>
+    </div>
+  </div>
+</form>
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Pemohon</th>
+      <th>Kegiatan</th>
+      <th>Ruangan</th>
+      <th>Hari & Waktu</th>
+      <th>Penanggung Jawab</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for p in peminjaman %}
+    <tr>
+      <td>{{ p.peminjam.username }}</td>
+      <td>{{ p.nama_kegiatan }}</td>
+      <td>{{ p.ruangan.nama }}</td>
+
+      <!-- Hari & Waktu -->
+      <td>
+        {% if p.hari %}
+          {{ p.get_hari_display }},
+        {% endif %}
+        {{ p.tanggal_mulai|date:"DATETIME_FORMAT" }} – {{ p.tanggal_selesai|date:"H:i" }}
+      </td>
+
+      <!-- Penanggung Jawab -->
+      <td>
+        {{ p.penanggung_jawab|default:"-" }}<br>
+        <small>{{ p.no_hp_penanggung|default:"" }}</small>
+      </td>
+
+      <!-- STATUS (tampilkan alasan pembatalan juga di sini) -->
+      <td>
+        {% if p.status == 'MENUNGGU' %}
+          <span class="badge text-bg-warning">Menunggu</span>
+        {% elif p.status == 'DISETUJUI' and p.minta_batal %}
+          <span class="badge text-bg-secondary">Menunggu Pembatalan</span>
+        {% elif p.status == 'DISETUJUI' %}
+          <span class="badge text-bg-success">Disetujui</span>
+        {% elif p.status == 'DITOLAK' %}
+          <span class="badge text-bg-danger">Ditolak</span>
+        {% elif p.status == 'DIBATALKAN' %}
+          <span class="badge text-bg-secondary">Dibatalkan</span>
+        {% elif p.status == 'SELESAI' %}
+          <span class="badge text-bg-info">Selesai</span>
+        {% else %}
+          <span class="badge text-bg-secondary">{{ p.get_status_display }}</span>
+        {% endif %}
+
+        {% if p.alasan_pembatalan %}
+          <br><small class="text-muted">Alasan: {{ p.alasan_pembatalan }}</small>
+        {% endif %}
+      </td>
+
+      <!-- Aksi -->
+      <td class="d-flex flex-column gap-2 align-items-stretch">
+
+        {% if p.minta_batal %}
+          <!-- Admin proses permintaan pembatalan -->
+          <form method="post" action="{% url 'proses_pengajuan' p.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="aksi" value="setujui_batal">
+            <button type="submit" class="btn btn-warning action-btn btn-admin-approve">
+              Setujui Pembatalan
+            </button>
+          </form>
+
+          <form method="post" action="{% url 'proses_pengajuan' p.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="aksi" value="tolak_batal">
+            <button type="submit" class="btn btn-outline-secondary action-btn btn-admin-reject">
+              Tolak Pembatalan
+            </button>
+          </form>
+
+        {% else %}
+          <!-- Proses normal -->
+          <a href="{% url 'proses_pengajuan' p.pk %}" class="btn btn-primary action-btn btn-admin-proses">
+            Proses
+          </a>
+        {% endif %}
+
+        <!-- Hapus (pakai global confirm) -->
+        <form method="post" action="{% url 'hapus_peminjaman' p.pk %}"
+              class="needs-confirm"
+              data-confirm-message="Hapus pengajuan ini? Tindakan tidak bisa dibatalkan.">
+          {% csrf_token %}
+          <button type="submit" class="btn-delete">
+            Hapus
+          </button>
+        </form>
+
+      </td>
+    </tr>
+
+    {% empty %}
+    <tr>
+      <td colspan="7" class="text-center">Belum ada pengajuan.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

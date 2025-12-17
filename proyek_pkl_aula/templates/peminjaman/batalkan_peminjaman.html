@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Batalkan Peminjaman{% endblock %}
+
+{% block content %}
+<h3>Batalkan Peminjaman Aula</h3>
+
+<div class="card">
+  <div class="card-body">
+    <p><strong>Kegiatan:</strong> {{ peminjaman.nama_kegiatan }}</p>
+    <p><strong>Ruangan:</strong> {{ peminjaman.ruangan.nama }}</p>
+    <p><strong>Waktu:</strong> {{ peminjaman.tanggal_mulai|date:"d M Y H:i" }} - {{ peminjaman.tanggal_selesai|date:"H:i" }}</p>
+
+    <hr>
+
+    <p>
+      Anda akan <strong>membatalkan</strong> peminjaman ini.
+      Silakan jelaskan alasannya agar dapat didokumentasikan dengan jelas.
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Alasan Pembatalan</label>
+        <textarea name="alasan_pembatalan" rows="4" class="form-control"
+                  placeholder="Contoh: Jadwal kegiatan berubah, aula tidak jadi digunakan."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-danger">Batalkan Peminjaman</button>
+      <a href="{% url 'riwayat' %}" class="btn btn-secondary ms-2">Kembali</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Beranda - Sistem Peminjaman Aula{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h3 class="card-title">Selamat datang di Sistem Peminjaman Aula</h3>
+        <p class="card-text">
+          Aplikasi ini digunakan untuk mengajukan peminjaman Aula Kecamatan Samarinda Ulu
+          secara online, tanpa perlu bolak-balik hanya untuk cek ketersediaan jadwal.
+        </p>
+        <ul>
+          <li>Lihat jadwal ketersediaan aula</li>
+          <li>Ajukan peminjaman secara online</li>
+          <li>Lacak status pengajuan Anda</li>
+        </ul>
+
+        {% if not user.is_authenticated %}
+          <a href="{% url 'register' %}" class="btn btn-action px-4">Daftar Sekarang</a>
+          <a href="{% url 'login' %}" class="btn btn-action px-4 ms-2">Login</a>
+        {% else %}
+          {# pake class custom supaya tidak di-override bootstrap #}
+          <a href="{% url 'ajukan' %}" class="btn btn-action home-apply">Ajukan Peminjaman</a>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Jadwal Terdekat</h5>
+        {% if upcoming %}
+          <ul class="list-group list-group-flush">
+            {% for p in upcoming %}
+            <li class="list-group-item">
+              <strong>{{ p.nama_kegiatan }}</strong><br>
+              {{ p.ruangan.nama }}<br>
+              {% if p.hari %}
+                {{ p.get_hari_display }}, 
+              {% endif %}
+              {{ p.tanggal_mulai|date:"DATETIME_FORMAT" }} - {{ p.tanggal_selesai|date:"H:i" }}
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>Belum ada jadwal terdekat.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

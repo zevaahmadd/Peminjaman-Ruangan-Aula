@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Proses Pengajuan{% endblock %}
+
+{% block content %}
+<h3>Proses Pengajuan</h3>
+
+<div class="card">
+  <div class="card-body">
+    <p><strong>Pemohon:</strong> {{ peminjaman.peminjam.username }}</p>
+    <p><strong>Kegiatan:</strong> {{ peminjaman.nama_kegiatan }}</p>
+    <p><strong>Ruangan:</strong> {{ peminjaman.ruangan.nama }}</p>
+
+    <p><strong>Penanggung Jawab:</strong> {{ peminjaman.penanggung_jawab|default:"-" }}</p>
+    <p><strong>No. HP:</strong> {{ peminjaman.no_hp_penanggung|default:"-" }}</p>
+
+    <!-- Hari + Waktu -->
+    <p><strong>Waktu:</strong>
+      {% if peminjaman.hari %}
+        {{ peminjaman.get_hari_display }},
+      {% endif %}
+      {{ peminjaman.tanggal_mulai|date:"d M Y H:i" }}
+      -
+      {{ peminjaman.tanggal_selesai|date:"H:i" }}
+    </p>
+
+    <p><strong>Keterangan:</strong> {{ peminjaman.keterangan|default:"-" }}</p>
+
+    <!-- ============================== -->
+    <!--   INFO PERMINTAAN PEMBATALAN   -->
+    <!-- ============================== -->
+    {% if peminjaman.minta_batal %}
+      <hr>
+      <div class="alert alert-warning">
+        <strong>Pemohon mengajukan pembatalan.</strong><br>
+        Alasan: {{ peminjaman.alasan_pembatalan|default:"(Tidak ada alasan)" }}
+      </div>
+    {% endif %}
+
+    <form method="post" class="mt-3">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label">Catatan untuk pemohon (opsional)</label>
+        <textarea name="catatan_admin" rows="3" class="form-control">{{ peminjaman.catatan_admin }}</textarea>
+      </div>
+
+      <!-- ============================== -->
+      <!--     TOMBOL UNTUK PENGAJUAN    -->
+      <!-- ============================== -->
+      {% if peminjaman.status == 'MENUNGGU' %}
+        <button type="submit" name="aksi" value="setujui" class="btn btn-success">
+          Setujui
+        </button>
+
+        <button type="submit" name="aksi" value="tolak" class="btn btn-danger ms-2">
+          Tolak
+        </button>
+
+
+      <!-- ============================== -->
+      <!--  TOMBOL UNTUK PEMBATALAN USER -->
+      <!-- ============================== -->
+      {% elif peminjaman.status == 'DISETUJUI' and peminjaman.minta_batal %}
+        <button type="submit" name="aksi" value="setujui_batal" class="btn btn-danger">
+          Setujui Pembatalan
+        </button>
+
+        <button type="submit" name="aksi" value="tolak_batal" class="btn btn-outline-secondary ms-2">
+          Tolak Pembatalan
+        </button>
+
+      {% else %}
+        <p class="text-muted">Tidak ada aksi yang tersedia untuk status ini.</p>
+      {% endif %}
+
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+venv/
+ENV/
+env/
+.venv/
+venv.bak/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+.static_root/
+staticfiles/
+assets/
+*.pot
+*.mo
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# coverage
+htmlcov/
+.coverage
+.coverage.*
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# wheel / build
+build/
+dist/
+*.egg-info/
+
+# secrets / dotenv
+.env
+.env.*
+secret_key.txt
+
+# node / npm
+node_modules/
+
+# system
+Thumbs.db

@@ -1,0 +1,361 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}Sistem Peminjaman Aula{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  </head>
+  <body class="app-body">
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <nav id="sidebar" class="sidebar" aria-hidden="false">
+        <div class="sidebar-header">
+          <div class="d-flex align-items-center gap-2">
+            <span class="sidebar-logo">🏛️</span>
+            <div class="sidebar-title">Aula Samarinda Ulu</div>
+          </div>
+
+          <button id="sidebarClose" type="button" class="btn btn-sm btn-light sidebar-close" aria-label="Tutup sidebar">
+            ✕
+          </button>
+        </div>
+
+        <div class="sidebar-menu">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              {% url 'home' as home_url %}
+              <a class="nav-link {% if request.path == home_url %}active{% endif %}" href="{{ home_url }}">
+                <span class="icon">🏠</span>
+                <span>Beranda</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              {% url 'jadwal' as jadwal_url %}
+              <a class="nav-link {% if request.path == jadwal_url %}active{% endif %}" href="{{ jadwal_url }}">
+                <span class="icon">📅</span>
+                <span>Jadwal</span>
+              </a>
+            </li>
+
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                {% url 'ajukan' as ajukan_url %}
+                <a class="nav-link {% if request.path == ajukan_url %}active{% endif %}" href="{{ ajukan_url }}">
+                  <span class="icon">✉️</span>
+                  <span>Ajukan</span>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                {% url 'riwayat' as riwayat_url %}
+                <a class="nav-link {% if request.path == riwayat_url %}active{% endif %}" href="{{ riwayat_url }}">
+                  <span class="icon">📜</span>
+                  <span>Riwayat</span>
+                </a>
+              </li>
+
+              {% if user.is_staff %}
+              <li class="nav-item">
+                {% url 'pengajuan_admin' as admin_url %}
+                <a class="nav-link {% if request.path == admin_url %}active{% endif %}" href="{{ admin_url }}">
+                  <span class="icon">🛠️</span>
+                  <span>Admin</span>
+                </a>
+              </li>
+              {% endif %}
+            {% endif %}
+          </ul>
+        </div>
+
+        <div class="sidebar-footer">
+          {% if user.is_authenticated %}
+            <div class="sidebar-user mb-2">
+              <div class="small text-muted">Login sebagai</div>
+              <strong>{{ user.username }}</strong>
+            </div>
+            <a href="{% url 'logout' %}" class="btn btn-action w-100 btn-sm">Keluar</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-action w-100 btn-sm">Login</a>
+          {% endif %}
+        </div>
+      </nav>
+
+      <!-- MAIN AREA -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div class="d-flex align-items-center gap-2">
+            <button id="sidebarToggle" type="button" class="btn btn-sm btn-outline-light d-md-none" aria-label="Buka sidebar">
+              ☰
+            </button>
+          </div>
+
+          <span class="topbar-title">Aula Samarinda Ulu</span>
+
+          {% if user.is_authenticated %}
+            <span class="topbar-user d-none d-md-inline">
+              Halo, <strong>{{ user.username }}</strong>
+            </span>
+          {% endif %}
+        </header>
+
+        <!-- CONTENT -->
+        <main class="content-wrapper">
+          <div class="container py-4">
+            {% if messages %}
+              {% for message in messages %}
+                {% if message.tags == 'error' %}
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {% else %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+              {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+          </div>
+
+          <footer class="footer text-center">
+            <div class="container">
+              <span>© {{ now|date:"Y" }} Kecamatan Samarinda Ulu – Sistem Peminjaman Aula</span>
+            </div>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <!-- CONFIRM MODAL (global, dipakai untuk form yang langsung submit) -->
+    <div class="modal fade" id="appConfirmModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Konfirmasi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body">
+            <p id="appConfirmMessage" class="mb-0">Apakah Anda yakin?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="appConfirmCancel" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" id="appConfirmOk" class="btn btn-danger">Ya, Lanjutkan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+
+    <!-- prefer external confirm logic if you made it -->
+    <script src="{% static 'js/confirm.js' %}" defer></script>
+
+    <!-- GLOBAL JS: sidebar + flatpickr + confirm modal handler -->
+    <script>
+      (function () {
+        // ========== SIDEBAR HANDLER (robust) ==========
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const closeBtn = document.getElementById('sidebarClose');
+
+        function openSidebar() {
+          if (!sidebar) return;
+          sidebar.classList.add('sidebar-open');
+          sidebar.setAttribute('aria-hidden', 'false');
+          // block background scroll on mobile
+          document.documentElement.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+          if (!sidebar) return;
+          sidebar.classList.remove('sidebar-open');
+          sidebar.setAttribute('aria-hidden', 'true');
+          document.documentElement.style.overflow = '';
+        }
+
+        if (toggleBtn) {
+          toggleBtn.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            if (sidebar && sidebar.classList.contains('sidebar-open')) {
+              closeSidebar();
+            } else {
+              openSidebar();
+            }
+          });
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            closeSidebar();
+          });
+        }
+
+        // close when clicking outside sidebar (only when open)
+        document.addEventListener('click', function (ev) {
+          if (!sidebar || !sidebar.classList.contains('sidebar-open')) return;
+          const target = ev.target;
+          if (sidebar.contains(target) || (toggleBtn && toggleBtn.contains(target))) return;
+          closeSidebar();
+        }, true);
+
+        // close on ESC
+        document.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Escape' || ev.key === 'Esc') {
+            if (sidebar && sidebar.classList.contains('sidebar-open')) closeSidebar();
+          }
+        });
+
+        // ensure on resize desktop resets overlay behavior
+        function syncSidebarOnResize() {
+          if (!sidebar) return;
+          if (window.innerWidth > 768) {
+            // Keep desktop default (no transform override), ensure body scroll allowed
+            sidebar.classList.remove('sidebar-open');
+            document.documentElement.style.overflow = '';
+            sidebar.setAttribute('aria-hidden', 'false');
+          } else {
+            sidebar.setAttribute('aria-hidden', sidebar.classList.contains('sidebar-open') ? 'false' : 'true');
+          }
+        }
+        window.addEventListener('resize', syncSidebarOnResize);
+        syncSidebarOnResize();
+
+        // ========== FLATPICKR INIT ==========
+        if (typeof flatpickr !== 'undefined') {
+          flatpickr(".datetimepicker", {
+            enableTime: true,
+            dateFormat: "d/m/Y H:i",
+            time_24hr: true,
+            locale: "id",
+            onReady: function(selectedDates, dateStr, instance) {
+              if (instance.calendarContainer.querySelector(".flatpickr-apply")) return;
+              const applyBtn = document.createElement("button");
+              applyBtn.type = "button";
+              applyBtn.innerText = "Terapkan";
+              applyBtn.className = "flatpickr-apply btn btn-primary btn-sm mt-2";
+              applyBtn.style.width = "100%";
+              applyBtn.addEventListener("click", function() {
+                instance.close();
+              });
+              instance.calendarContainer.appendChild(applyBtn);
+            }
+          });
+        }
+
+        // ========== GLOBAL CONFIRM MODAL HANDLER ==========
+        // This attaches to <form class="needs-confirm"> and shows modal before actual submit.
+        // If you already implement confirm logic in static/js/confirm.js, it can coexist.
+        (function () {
+          const modalEl = document.getElementById('appConfirmModal');
+          if (!modalEl) return;
+
+          const bsModal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
+          const msgEl = document.getElementById('appConfirmMessage');
+          const okBtn = document.getElementById('appConfirmOk');
+          const cancelBtn = document.getElementById('appConfirmCancel');
+
+          let pendingForm = null;
+
+          function resetActiveButtons(form) {
+            try {
+              const active = document.activeElement;
+              if (active && form && form.contains(active)) active.blur();
+            } catch (e) { /* ignore */ }
+
+            form.querySelectorAll('button, input[type="submit"], a').forEach(el => {
+              el.classList.remove('active');
+              el.style.boxShadow = '';
+              el.style.backgroundColor = '';
+            });
+          }
+
+          function attachConfirmHandlers() {
+            document.querySelectorAll('form.needs-confirm').forEach(form => {
+              if (form.dataset.confirmBound === '1') return;
+              form.dataset.confirmBound = '1';
+
+              form.addEventListener('submit', function (ev) {
+                if (form.dataset.confirmSkip === '1') return; // already approved via modal
+
+                ev.preventDefault();
+                pendingForm = form;
+                const submitter = ev.submitter || null;
+
+                let message = form.dataset.confirmMessage || 'Yakin ingin melanjutkan aksi ini?';
+                if (submitter && submitter.dataset && submitter.dataset.confirmMessage) {
+                  message = submitter.dataset.confirmMessage;
+                }
+                if (msgEl) msgEl.textContent = message;
+
+                const okText = form.dataset.confirmOkText || (submitter && submitter.dataset.confirmOkText) || 'Ya, Lanjutkan';
+                const okClass = form.dataset.confirmOkClass || (submitter && submitter.dataset.confirmOkClass) || 'btn-danger';
+
+                okBtn.className = 'btn ' + okClass;
+                okBtn.textContent = okText;
+
+                bsModal.show();
+              });
+            });
+          }
+
+          okBtn.addEventListener('click', function () {
+            if (!pendingForm) { bsModal.hide(); return; }
+            pendingForm.dataset.confirmSkip = '1';
+            resetActiveButtons(pendingForm);
+            bsModal.hide();
+
+            // small delay to allow modal to hide UI changes
+            setTimeout(() => {
+              try {
+                pendingForm.submit();
+              } catch (e) {
+                console.error('Gagal submit form via JS:', e);
+              } finally {
+                delete pendingForm.dataset.confirmSkip;
+                pendingForm = null;
+              }
+            }, 160);
+          });
+
+          cancelBtn.addEventListener('click', function () {
+            if (pendingForm) {
+              resetActiveButtons(pendingForm);
+              pendingForm = null;
+            }
+            bsModal.hide();
+          });
+
+          modalEl.addEventListener('hidden.bs.modal', function () {
+            if (pendingForm) {
+              resetActiveButtons(pendingForm);
+              pendingForm = null;
+            }
+          });
+
+          attachConfirmHandlers();
+          const mo = new MutationObserver(() => attachConfirmHandlers());
+          mo.observe(document.body, { childList: true, subtree: true });
+        })();
+
+      })(); // end main IIFE
+    </script>
+  </body>
+</html>

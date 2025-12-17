@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Jadwal Peminjaman Aula{% endblock %}
+
+{% block content %}
+<h3>Jadwal Peminjaman Aula</h3>
+<p>Berikut jadwal peminjaman aula yang sudah disetujui.</p>
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Kegiatan</th>
+      <th>Ruangan</th>
+      <th>Hari & Waktu</th>   <!-- ganti judul kolom -->
+      <th>Pemohon</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in peminjaman %}
+    <tr>
+      <td>{{ p.nama_kegiatan }}</td>
+      <td>{{ p.ruangan.nama }}</td>
+      <td>
+        {% if p.hari %}
+          {{ p.get_hari_display }}, 
+        {% endif %}
+        {{ p.tanggal_mulai|date:"DATETIME_FORMAT" }} - {{ p.tanggal_selesai|date:"H:i" }}
+      </td>
+      <td>{{ p.peminjam.username }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4" class="text-center">Belum ada jadwal.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

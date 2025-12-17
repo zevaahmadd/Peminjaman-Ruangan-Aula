@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Ajukan Peminjaman{% endblock %}
+
+{% block content %}
+<h3>Ajukan Peminjaman Aula</h3>
+
+<div class="card">
+  <div class="card-body">
+
+    {% if form.errors %}
+      <div class="alert alert-danger">
+        Pastikan semua data sudah benar.
+      </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label">Ruangan</label>
+        {{ form.ruangan }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Tanggal & Waktu Mulai (WITA)</label>
+        {{ form.tanggal_mulai }}
+        <small class="text-muted d-block">
+          Format: hh/bb/tttt jj:mm (contoh: 28/11/2025 09:00)
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Tanggal & Waktu Selesai (WITA)</label>
+        {{ form.tanggal_selesai }}
+        <small class="text-muted d-block">
+          Format: hh/bb/tttt jj:mm (contoh: 28/11/2025 11:00)
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Nama Kegiatan</label>
+        {{ form.nama_kegiatan }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Nama Penanggung Jawab Kegiatan</label>
+        {{ form.penanggung_jawab }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">No. HP Penanggung Jawab</label>
+        {{ form.no_hp_penanggung }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Keterangan</label>
+        {{ form.keterangan }}
+      </div>
+
+      <!-- Tombol submit sudah diganti style khusus -->
+      <button type="submit" class="btn btn-action btn-form-submit">Kirim Pengajuan</button>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

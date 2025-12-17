@@ -1,0 +1,831 @@
+/* ===================================================================
+   style.css — lengkap, konsisten, dan siap dipaste
+   =================================================================== */
+
+/* ===== GLOBAL ===== */
+body,
+.app-body {
+    background-color: #f5f7fb;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== LAYOUT UTAMA ===== */
+.app-layout {
+    display: flex;
+}
+
+/* ===== SIDEBAR (DESKTOP DEFAULT) ===== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0d6efd, #0052cc);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 18px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 1040;
+    transition: transform 0.25s ease;
+    transform: none;               /* <-- desktop: selalu kelihatan */
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* tombol ✕ ke kanan */
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.sidebar-close {
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-weight: 600;
+    display: none;
+}
+
+.sidebar-logo {
+    font-size: 1.8rem;
+}
+
+.sidebar-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.sidebar-menu {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 8px;
+}
+
+.sidebar .nav-link {
+    color: #e3f2ff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    text-decoration: none;
+}
+
+.sidebar .nav-link .icon {
+    width: 22px;
+    text-align: center;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px);
+}
+
+.sidebar .nav-link.active {
+    background-color: #fff;
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    margin-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    padding-top: 12px;
+    font-size: 0.85rem;
+}
+
+.sidebar-user {
+    color: #e3f2ff;
+}
+
+/* ===== MAIN AREA & TOPBAR ===== */
+.main-area {
+    margin-left: 260px;               /* geser karena ada sidebar */
+    width: calc(100% - 260px);       /* biar nggak melebar ke kanan */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    height: 56px;
+    background-color: #0d6efd;
+    color: #fff;
+    padding: 0 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative; /* untuk centering title */
+}
+
+/* Title di tengah navbar atas */
+.topbar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    font-weight: 600;
+    pointer-events: none; /* biar button di kiri/kanan tetap bisa di-klik */
+}
+
+.topbar-user {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.content-wrapper {
+    flex: 1;
+    padding: 28px 30px; /* beri spasi agar konten nggak nempel ke kanan */
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    margin-top: 20px;
+    padding: 16px 0;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* ===== CARD & FORM ===== */
+.navbar-brand {
+    font-weight: 700;
+}
+
+/* Semua tombol utama & outline jadi bulat (global) */
+.btn-primary,
+.btn-outline-primary,
+.btn-outline-light {
+    border-radius: 999px;
+}
+
+/* Biar card keliatan lembut */
+.card {
+    border-radius: 12px;
+}
+
+/* Styling form biar konsisten */
+.card .form-control {
+    border-radius: 8px;
+}
+
+.card .form-label {
+    font-weight: 500;
+}
+
+/* ===== FLATPICKR (DateTime Picker) ===== */
+.flatpickr-apply {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 0;
+    cursor: pointer;
+    width: 100%;
+}
+.flatpickr-apply:hover {
+    background-color: #0b5ed7;
+}
+
+/* ===== ALERT / NOTIFIKASI ===== */
+.alert-error {
+    background-color: #ff4d4f !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 500;
+}
+
+.alert-danger {
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 0 12px rgba(255, 77, 79, 0.55);
+    animation: pulseDanger 0.5s ease-out;
+}
+
+.alert-danger::before {
+    content: "⚠ ";
+}
+
+/* Animasi kecil biar error lebih “teriak” */
+@keyframes pulseDanger {
+  0%   { transform: scale(0.95); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== RESPONSIVE (MOBILE) ===== */
+@media (max-width: 768px) {
+    /* Sidebar default sembunyi di mobile */
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    /* Kalau dikasih class .sidebar-open dari JS, dia muncul */
+    .sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+
+    /* Konten full width */
+    .main-area {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar-close {
+        display: inline-flex;          /* tombol ✕ cuma muncul di mobile */
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* pastikan tombol aksi di tabel punya tinggi & padding konsisten */
+.table .btn {
+  min-height: 40px;            /* biar konsisten */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* tombol full-width di kolom aksi */
+.table .w-100.btn {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+/* action button in tables: make similar size */
+.table .action-btn,
+.table button.action-btn,
+.table a.action-btn {
+  min-width: 170px;      /* lebar minimum supaya konsisten */
+  height: 40px;          /* samakan tinggi */
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+/* Untuk tombol outline-danger (hapus) agar berperilaku sama */
+.table .btn-outline-danger.action-btn {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* jika butuh style khusus agar tombol menonjol di table */
+.table .btn-outline-warning.action-btn {
+  color: #856404;
+  border-color: #ffdf7e;
+}
+
+/* responsive: pada layar sempit, tombol jadi full width */
+@media (max-width: 576px) {
+  .table .action-btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* buat tombol aksi di tabel supaya konsisten lebar/tinggi */
+.action-btn {
+    min-width: 160px;        /* atur lebar minimal supaya seragam */
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border-radius: 999px;
+}
+
+/* responsive: kecilkan tombol di layar sempit */
+@media (max-width: 768px) {
+    .action-btn {
+        min-width: 120px;
+        height: 36px;
+    }
+}
+
+/* Tombol Hapus — bentuk kotak & outline stabil */
+.btn-delete {
+    border-radius: 8px !important;
+    border: 2px solid #dc3545 !important;
+    color: #dc3545 !important;
+    background: transparent !important;
+    transition: 0.2s;
+    min-width: 160px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete:hover {
+    background: #dc3545 !important;
+    color: #fff !important;
+}
+
+/* Tombol Ajukan Pembatalan (kuning) */
+.btn-cancel-request {
+    border-radius: 8px !important;
+    border: 2px solid #ffc107 !important;
+    color: #000 !important;
+    background: transparent !important;
+    font-weight: 600;
+    transition: 0.2s ease;
+    min-width: 160px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cancel-request:hover {
+    background: #ffc107 !important;
+    color: #000 !important;
+}
+
+/* Varian kecil (opsional untuk table sempit) */
+.btn-delete.sm, .btn-cancel-request.sm, .action-btn.sm {
+  min-width: 120px;
+  height: 36px;
+  padding: 6px 10px;
+  font-size: 0.95rem;
+}
+
+/* ---------- Visual polish: badge-like look for status-buttons (opsional) ---------- */
+.badge-like {
+  display:inline-block;
+  padding:6px 10px;
+  border-radius: 999px;
+  font-weight:700;
+}
+
+/* Jika mau buat Ajukan Pembatalan berwarna sama style 'Menunggu' */
+.btn-cancel-request.as-badge {
+  border-radius: 999px !important;
+  padding: 6px 14px !important;
+  min-width: 140px !important;
+}
+
+/* ==========================
+   Table action buttons - overrides (paste at end of style.css)
+   ========================== */
+
+/* Base: semua tombol aksi di tabel jadi kotak, ukuran konsisten */
+.table td .action-btn,
+.table td .btn-delete,
+.table td .btn-cancel-request,
+.table td .btn-admin-proses,
+.table td .btn-admin-approve,
+.table td .btn-admin-reject {
+  display: block;              /* agar setiap tombol satu baris */
+  width: 160px;                /* lebar konsisten */
+  margin: 6px auto;            /* center dan jarak antar tombol */
+  min-width: 140px;
+  height: 44px;
+  padding: 6px 14px;
+  border-radius: 10px !important; /* kotak lembut */
+  font-weight: 600;
+  font-size: 0.98rem;
+  text-align: center;
+  line-height: 1;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  box-sizing: border-box;
+}
+
+/* Pastikan kita override bootstrap pill global yang mungkin masih berlaku */
+.table td .action-btn.btn,
+.table td .action-btn a,
+.table td .action-btn button {
+  border-radius: 10px !important;
+}
+
+/* Hapus (outline merah) */
+.btn-delete {
+  background: transparent !important;
+  color: #dc3545 !important;
+  border: 2px solid #dc3545 !important;
+}
+
+/* Hapus:hover -> full merah */
+.btn-delete:hover,
+.table td .btn-delete:focus {
+  background: #dc3545 !important;
+  color: #fff !important;
+  border-color: #b32934 !important;
+}
+
+/* Ajukan Pembatalan / Cancel request (outline kuning, teks hitam) */
+.btn-cancel-request {
+  background: transparent !important;
+  color: #000 !important;
+  border: 2px solid #ffc107 !important;
+  box-shadow: none;
+}
+
+/* kalau mau tampil seperti badge "Menunggu" saat hover: isi full kuning */
+.btn-cancel-request:hover,
+.table td .btn-cancel-request:focus {
+  background: #ffc107 !important;
+  color: #000 !important;
+  border-color: #e6ad00 !important;
+}
+
+/* Proses (admin) - biru outline -> hover jadi biru penuh */
+.btn-admin-proses {
+  background: transparent !important;
+  color: #0d6efd !important;
+  border: 2px solid #0d6efd !important;
+}
+
+/* agar Proses berubah jadi filled biru saat hover */
+.btn-admin-proses:hover,
+.table td .btn-admin-proses:focus {
+  background: #0d6efd !important;
+  color: #fff !important;
+  border-color: #0a58ca !important;
+}
+
+/* Setujui Pembatalan (kuning filled on hover) */
+.btn-admin-approve {
+  background: transparent !important;
+  color: #856404 !important; /* gelap agar terbaca */
+  border: 2px solid #ffc107 !important;
+}
+
+.btn-admin-approve:hover,
+.table td .btn-admin-approve:focus {
+  background: #ffc107 !important;
+  color: #000 !important;
+  border-color: #e6ad00 !important;
+}
+
+/* Tolak Pembatalan (outline abu) */
+.btn-admin-reject {
+  background: transparent !important;
+  color: #6c757d !important;
+  border: 2px solid #ced4da !important;
+}
+
+.btn-admin-reject:hover,
+.table td .btn-admin-reject:focus {
+  background: #6c757d !important;
+  color: #fff !important;
+  border-color: #5a6268 !important;
+}
+
+/* Kalau butuh varian kecil (mobile/tabel sempit) */
+@media (max-width: 576px) {
+  .table td .action-btn,
+  .table td .btn-delete,
+  .table td .btn-cancel-request,
+  .table td .btn-admin-proses,
+  .table td .btn-admin-approve,
+  .table td .btn-admin-reject {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    display: block;
+  }
+}
+
+/* troubleshooting: kalau masih ada pill effect dari .btn-primary global,
+   paksa border-radius kecil untuk tombol table */
+.table .btn-primary,
+.table .btn {
+  border-radius: 10px !important;
+}
+
+/* rapikan jarak vertikal di cell */
+.table td {
+  vertical-align: middle;
+}
+
+/* optional: jika ada teks tombol yang "buram", beri font-weight tebal */
+.table td button,
+.table td a.action-btn {
+  font-weight: 600;
+}
+
+/* ===== FIX VERTICAL ALIGNMENT ALL ACTION BUTTONS ===== */
+.table td .action-btn,
+.table td button,
+.table td a,
+.btn-admin-proses,
+.btn-admin-approve,
+.btn-admin-reject,
+.btn-delete,
+.btn-cancel-request {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 1 !important;
+    height: 44px !important;    /* sama seperti Hapus */
+}
+
+.table td .action-btn span,
+.table td button span,
+.table td a span {
+    display: inline-block;
+    line-height: 1;
+}
+
+/* ===== FULL-WIDTH BUTTONS FOR RIWAYAT (Aksi column) ===== */
+.riwayat-aksi button,
+.riwayat-aksi .btn-delete,
+.riwayat-aksi .btn-cancel-request {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 4px 0 !important; /* biar ada jarak antar tombol */
+}
+
+/* ===================================================================
+   Unified "Home" and form submit buttons (outline white -> fill blue on hover)
+   =================================================================== */
+
+/* standard reusable action button (outline -> filled on hover) */
+.btn-action {
+  background: #ffffff !important;      /* default putih */
+  color: #0d6efd !important;           /* teks biru */
+  border: 2px solid #0d6efd !important;/* garis biru */
+  border-radius: 999px !important;     /* bulat besar */
+  padding: 8px 22px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;   /* hilangkan underline kalau ada anchor */
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;
+  box-shadow: none;
+}
+
+.btn-action:hover,
+.btn-action:focus {
+  background: #0d6efd !important;     /* jadi biru penuh */
+  color: #fff !important;             /* teks putih */
+  border-color: #0d6efd !important;
+}
+
+/* filled variant (kalau mau default biru) */
+.btn-action-filled {
+  background: #0d6efd !important;
+  color: #ffffff !important;
+  border: 2px solid #0d6efd !important;
+  box-shadow: none;
+}
+.btn-action-filled:hover,
+.btn-action-filled:focus {
+  background: #0a58ca !important;
+  border-color: #0a58ca !important;
+}
+
+/* small variant */
+.btn-action.sm, .btn-action-filled.sm {
+  padding: 6px 12px !important;
+  font-size: 0.9rem !important;
+}
+
+/* anchor safety: no underline */
+a.btn-action, a.btn-action-filled {
+  text-decoration: none !important;
+}
+
+/* apply consistent width in table cells */
+.table td .btn-action,
+.table td .btn-action-filled {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* ===== Tombol Ajukan Peminjaman — outline default, biru saat hover ===== */
+.btn-home-apply {
+    background: #ffffff !important;
+    color: #0d6efd !important;
+    border: 2px solid #0d6efd !important;
+    border-radius: 999px !important;
+    padding: 10px 26px !important;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: 0.25s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
+}
+
+.btn-home-apply:hover,
+.btn-home-apply:focus {
+    background: #0d6efd !important;
+    color: #ffffff !important;
+    border-color: #0d6efd !important;
+}
+
+/* hilangkan underline pada tombol link custom */
+.btn-home-apply,
+.btn-home-apply:link,
+.btn-home-apply:visited {
+  text-decoration: none !important;
+}
+
+.btn-home-apply:hover,
+.btn-home-apply:focus,
+.btn-home-apply:active {
+  text-decoration: none !important;
+  outline: none !important; /* supaya border fokus tidak ganggu tampilan */
+}
+
+/* ===== Tombol submit di form Ajukan (sama style dgn tombol Beranda) ===== */
+.btn-form-submit {
+    background: #ffffff !important;
+    color: #0d6efd !important;
+    border: 2px solid #0d6efd !important;
+    border-radius: 999px !important;
+    padding: 10px 26px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;   /* hilangkan underline kalau elemen <a> */
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    cursor: pointer;
+}
+
+.btn-form-submit:hover,
+.btn-form-submit:focus {
+    background: #0d6efd !important;
+    color: #ffffff !important;
+    border-color: #0d6efd !important;
+}
+
+/* jika ada outline / focus ring, rapikan */
+.btn-form-submit:focus,
+.btn-home-apply:focus {
+    box-shadow: 0 4px 18px rgba(13,110,253,0.18) !important;
+    outline: none !important;
+}
+
+/* varian kecil kalau butuh di mobile */
+.btn-form-submit.sm {
+    padding: 8px 18px !important;
+    font-size: 0.95rem !important;
+}
+
+/* ===========================
+   small misc helpers
+   =========================== */
+
+/* jika mau tombol di sidebar seragam */
+.sidebar .btn-action {
+  width: 100%;
+  text-align: left;
+  border-radius: 10px;
+}
+
+/* safety: jika masih ada .btn-primary yang mengganggu, override di konteks table */
+.table .btn-primary,
+.table .btn {
+  border-radius: 10px !important;
+}
+
+/* rapikan jarak vertikal di cell */
+.table td {
+  vertical-align: middle;
+}
+
+/* jika ada teks tombol yang "buram", beri font-weight tebal */
+.table td button,
+.table td a.action-btn {
+  font-weight: 600;
+}
+
+/* akhir file */
+
+/* ===== Override cepat untuk tombol Login/Register (jika masih pakai .btn-primary di form) ===== */
+/* Hanya menargetkan tombol .btn-primary yang berada di dalam .card yang biasa dipakai form auth */
+.card .btn-primary {
+  /* ubah menjadi style outline yang konsisten dengan .btn-form-submit */
+  background: #ffffff !important;
+  color: #0d6efd !important;
+  border: 2px solid #0d6efd !important;
+  border-radius: 999px !important;
+  padding: 10px 26px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* hover / fokus -> jadi biru penuh */
+.card .btn-primary:hover,
+.card .btn-primary:focus {
+  background: #0d6efd !important;
+  color: #fff !important;
+  border-color: #0d6efd !important;
+  box-shadow: 0 4px 18px rgba(13,110,253,0.18) !important;
+  outline: none !important;
+}
+
+/* ketika tombol berada di form login/register center card, pastikan teks vertikal center */
+.card .btn-primary {
+  line-height: 1;
+  height: auto;
+}
+
+/* ===== Tombol Login & Daftar (Kotak, modern, biru-filled) ===== */
+.btn-auth {
+    background: #0d6efd !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;   /* kotak halus */
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    width: 100%;                      /* full width seperti saat ini */
+    text-align: center;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    transition: background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn-auth:hover,
+.btn-auth:focus {
+    background: #0b5ed7 !important;   /* biru lebih gelap */
+    color: #ffffff !important;
+    box-shadow: 0 4px 18px rgba(13,110,253,0.18) !important;
+    outline: none !important;
+}
+
+/* ===== Tombol Login & Daftar (Kotak, modern, biru-filled) ===== */
+button.btn-auth,
+input.btn-auth {
+    background: #0d6efd !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;      /* kotak lembut */
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    width: 100%;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    transition: background-color 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: none !important;
+}
+
+button.btn-auth:hover,
+button.btn-auth:focus,
+input.btn-auth:hover,
+input.btn-auth:focus {
+    background: #0b5ed7 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 18px rgba(13,110,253,0.18) !important;
+    outline: none !important;
+}
+
+/* OVERRIDE khusus untuk tombol form auth (Login / Register) */
+.btn-form-submit {
+    background: #ffffff !important;
+    color: #0d6efd !important;
+    border: 2px solid #0d6efd !important;
+    border-radius: 8px !important;         /* kotak lembut, bukan pill */
+    padding: 10px 24px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    cursor: pointer;
+    box-shadow: none !important;
+}
+
+/* Hover/focus -> filled biru, teks putih */
+.btn-form-submit:hover,
+.btn-form-submit:focus {
+    background: #0d6efd !important;
+    color: #ffffff !important;
+    border-color: #0d6efd !important;
+    box-shadow: 0 6px 18px rgba(13,110,253,0.15) !important;
+    outline: none !important;
+    text-decoration: none !important;
+}

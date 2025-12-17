@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}Riwayat Peminjaman{% endblock %}
+
+{% block content %}
+<h3>Riwayat Pengajuan Peminjaman Aula</h3>
+
+<table class="table table-bordered table-hover align-middle">
+  <thead>
+    <tr>
+      <th>Kegiatan</th>
+      <th>Ruangan</th>
+      <th>Penanggung Jawab</th>
+      <th>Hari & Waktu</th>
+      <th>Status</th>
+      <th>Catatan Admin</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for p in peminjaman %}
+    <tr>
+      <td>{{ p.nama_kegiatan }}</td>
+      <td>{{ p.ruangan.nama }}</td>
+
+      <!-- Penanggung Jawab -->
+      <td>
+        {{ p.penanggung_jawab|default:"-" }}<br>
+        <small class="text-muted">{{ p.no_hp_penanggung|default:"" }}</small>
+      </td>
+
+      <!-- Hari + Waktu -->
+      <td>
+        {% if p.hari %}
+          {{ p.get_hari_display }},
+        {% endif %}
+        {{ p.tanggal_mulai|date:"DATETIME_FORMAT" }} – {{ p.tanggal_selesai|date:"H:i" }}
+      </td>
+
+      <!-- Status badge (plus alasan pembatalan ditempatkan di sini) -->
+      <td>
+        {% if p.status == 'MENUNGGU' %}
+          <span class="badge text-bg-warning">Menunggu</span>
+
+        {% elif p.status == 'DISETUJUI' and p.minta_batal %}
+          <span class="badge text-bg-secondary">Menunggu Pembatalan</span>
+
+        {% elif p.status == 'DISETUJUI' %}
+          <span class="badge text-bg-success">Disetujui</span>
+
+        {% elif p.status == 'DITOLAK' %}
+          <span class="badge text-bg-danger">Ditolak</span>
+
+        {% elif p.status == 'DIBATALKAN' %}
+          <span class="badge text-bg-secondary">Dibatalkan</span>
+
+        {% elif p.status == 'SELESAI' %}
+          <span class="badge text-bg-info">Selesai</span>
+
+        {% else %}
+          <span class="badge text-bg-secondary">{{ p.get_status_display }}</span>
+        {% endif %}
+
+        {% if p.alasan_pembatalan %}
+          <br>
+          <small class="text-muted">Alasan: {{ p.alasan_pembatalan }}</small>
+        {% endif %}
+      </td>
+
+      <!-- Catatan Admin -->
+      <td>
+        {{ p.catatan_admin|default:"-" }}
+      </td>
+
+      <!-- Aksi -->
+      <td class="riwayat-aksi">
+
+        {% if p.status == 'MENUNGGU' or p.status == 'DITOLAK' %}
+          <form method="post"
+                action="{% url 'hapus_peminjaman' p.pk %}"
+                class="needs-confirm"
+                data-confirm-message="Yakin ingin menghapus pengajuan ini? Tindakan tidak bisa dikembalikan.">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">Hapus</button>
+          </form>
+
+        {% elif p.status == 'DISETUJUI' and not p.minta_batal %}
+          {% if p.status != 'SELESAI' %}
+            <!-- kalau kamu masih pakai modal alasan (textarea) -> tetap pakai openCancelModal -->
+            <button class="btn-cancel-request" onclick="openCancelModal('{{ p.pk }}')">
+              Ajukan Pembatalan
+            </button>
+          {% endif %}
+
+        {% elif p.status == 'DISETUJUI' and p.minta_batal %}
+          <span class="text-muted">Menunggu persetujuan admin...</span>
+
+        {% else %}
+          -
+        {% endif %}
+
+      </td>
+    </tr>
+
+    {% empty %}
+    <tr>
+      <td colspan="7" class="text-center">Belum ada pengajuan.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Modal Batal Peminjaman (tetap dipertahankan untuk alasan) -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="post" id="cancelForm">
+      {% csrf_token %}
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajukan Pembatalan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <label class="form-label">Alasan pembatalan</label>
+          <textarea name="alasan" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary"
+                  data-bs-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-danger">Kirim Permintaan</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openCancelModal(id) {
+    const modal = new bootstrap.Modal(document.getElementById("cancelModal"));
+    const form = document.getElementById("cancelForm");
+
+    const baseUrl = "{% url 'batalkan_peminjaman' 0 %}";
+    form.action = baseUrl.replace("0", id);
+
+    modal.show();
+  }
+</script>
+
+{% endblock %}
